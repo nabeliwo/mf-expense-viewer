@@ -1,8 +1,6 @@
 import { FC, ReactNode } from 'react'
-import './globals.css'
-import { Inter } from 'next/font/google'
 
-const inter = Inter({ subsets: ['latin'] })
+import './globals.css'
 
 export const metadata = {
   title: 'Create Next App',
@@ -15,7 +13,7 @@ type Props = {
 
 const RootLayout: FC<Props> = ({ children }) => (
   <html lang="ja">
-    <body className={inter.className}>{children}</body>
+    <body>{children}</body>
   </html>
 )
 
