@@ -11,6 +11,13 @@
     "firebase": "firebase"
   },
   "dependencies": {
+    "@chakra-ui/next-js": "^2.1.4",
+    "@chakra-ui/react": "^2.7.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "edge-csrf": "^1.0.3",
+    "firebase": "^9.22.2",
+    "framer-motion": "^10.12.16",
     "next": "13.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0"

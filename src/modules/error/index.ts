@@ -1,0 +1,1 @@
+export { AppHttpError } from './errorTypes'
