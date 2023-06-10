@@ -1,20 +1,19 @@
 import { headers, cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 
-import { Home } from '@/components/page/Home'
+import { Dashboard } from '@/components/page/Dashboard'
 import { path } from '@/constants'
 import { User } from '@/modules/user'
 
-const HomePage = () => {
+const DashboardPage = () => {
   const csrfToken = headers().get('X-CSRF-Token') || ''
   const userCookie = cookies().get('user')?.value
   const user: User = userCookie ? JSON.parse(userCookie) : null
 
-  if (user) {
-    redirect(path.dashboard)
+  if (!user) {
+    return null
   }
 
-  return <Home csrfToken={csrfToken} />
+  return <Dashboard />
 }
 
-export default HomePage
+export default DashboardPage

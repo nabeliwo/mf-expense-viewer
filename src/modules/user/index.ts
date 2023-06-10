@@ -1,2 +1,2 @@
 export type { User } from './userTypes'
-export { login } from './userUsecases'
+export { login, logout } from './userUsecases'

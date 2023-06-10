@@ -16,7 +16,7 @@ export const LoginButton: FC<Props> = ({ csrfToken }) => {
 
   const handleClick = useCallback(async () => {
     await login(csrfToken)
-    router.push(path.month)
+    router.push(path.dashboard)
   }, [csrfToken, router])
 
   return (

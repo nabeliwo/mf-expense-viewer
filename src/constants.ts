@@ -1,6 +1,6 @@
 export const path = {
   root: '/',
-  month: '/month',
+  dashboard: '/dashboard',
 
   api: {
     auth: '/api/auth',

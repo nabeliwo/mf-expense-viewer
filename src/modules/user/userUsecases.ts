@@ -13,3 +13,7 @@ export const login = async (csrfToken: string) => {
 
   return data
 }
+
+export const logout = async () => {
+  await httpRequest.delete(path.api.auth)
+}

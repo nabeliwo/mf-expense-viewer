@@ -30,4 +30,11 @@ export const httpRequest = {
       ...baseOptions,
     }).then(handleResponse)
   },
+
+  delete: <T>(url: string): Promise<T> => {
+    return fetch(url, {
+      method: 'DELETE',
+      ...baseOptions,
+    }).then(handleResponse)
+  },
 }

@@ -7,6 +7,7 @@ const csrfProtect = csrf({
   cookie: {
     secure: process.env.NODE_ENV === 'production',
   },
+  ignoreMethods: ['GET', 'DELETE', 'HEAD', 'OPTIONS'],
 })
 
 export const middleware = async (request: NextRequest) => {
