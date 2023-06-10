@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
+import { getDatabase } from 'firebase/database'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,34 +13,31 @@ const firebaseConfig = {
 }
 
 export const app = initializeApp(firebaseConfig)
+
+export const database = getDatabase(app)
+
 export const auth = getAuth(app)
 export const authProvider = new GoogleAuthProvider()
-
 export const signIn = () =>
-  new Promise<{ idToken: string; displayName: string; email: string }>(
-    (resolve, reject) => {
-      signInWithPopup(auth, authProvider)
-        .then(async (result) => {
-          const idToken = await result.user.getIdToken()
-
-          resolve({
-            idToken,
-            displayName: result.user.displayName || '',
-            email: result.user.email || '',
-          })
+  new Promise<{ id: string; name: string }>((resolve, reject) => {
+    signInWithPopup(auth, authProvider)
+      .then(async (result) => {
+        resolve({
+          id: result.user.uid,
+          name: result.user.displayName || result.user.email || '',
         })
-        .catch((error) => {
-          const errorCode = error.code
-          const errorMessage = error.message
-          const email = error.customData.email
-          const credential = GoogleAuthProvider.credentialFromError(error)
+      })
+      .catch((error) => {
+        const errorCode = error.code
+        const errorMessage = error.message
+        const email = error.customData.email
+        const credential = GoogleAuthProvider.credentialFromError(error)
 
-          console.error(`errorCode: ${errorCode}`)
-          console.error(`errorMessage: ${errorMessage}`)
-          console.error(`email: ${email}`)
-          console.error(`credential: ${credential}`)
+        console.error(`errorCode: ${errorCode}`)
+        console.error(`errorMessage: ${errorMessage}`)
+        console.error(`email: ${email}`)
+        console.error(`credential: ${credential}`)
 
-          reject(error)
-        })
-    },
-  )
+        reject(error)
+      })
+  })

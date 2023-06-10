@@ -6,19 +6,14 @@ export const POST = async (req: NextRequest) => {
     user,
   }: {
     user: {
-      idToken: string
-      displayName: string
-      email: string
+      id: string
+      name: string
     }
   } = await req.json()
 
-  // Set session expiration to 5 days.
-  const maxAge = 60 * 60 * 24 * 5 * 1000
+  const maxAge = 60 * 60 * 24 * 5 * 1000 // 5日
 
-  cookies().set('userId', user.idToken, { maxAge })
-
-  console.log('----------------------------------')
-  console.log(user)
+  cookies().set('user', JSON.stringify(user), { maxAge })
 
   return NextResponse.json(user)
 }
