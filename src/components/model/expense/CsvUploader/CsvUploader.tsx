@@ -82,7 +82,7 @@ export const CsvUploader = () => {
 
       <Modal
         isOpen={isOpen}
-        size="2xl"
+        size="6xl"
         closeOnOverlayClick={false}
         onClose={handleClose}
       >

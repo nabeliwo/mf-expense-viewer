@@ -16,6 +16,7 @@
     "@chakra-ui/react": "^2.7.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "csv-parser": "^3.0.0",
     "dayjs": "^1.11.8",
     "edge-csrf": "^1.0.3",
     "firebase": "^9.22.2",
