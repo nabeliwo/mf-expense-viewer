@@ -1,6 +1,13 @@
+import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import { FC, ReactNode } from 'react'
 
 import { Providers } from './providers'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.tz.setDefault('Asia/Tokyo')
 
 export const metadata = {
   title:

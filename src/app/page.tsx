@@ -1,8 +1,7 @@
 import { headers, cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 
+import { ApplicationLayout } from '@/components/layout/ApplicationLayout'
 import { Home } from '@/components/page/Home'
-import { path } from '@/constants'
 import { User } from '@/modules/user'
 
 const HomePage = () => {
@@ -10,11 +9,11 @@ const HomePage = () => {
   const userCookie = cookies().get('user')?.value
   const user: User = userCookie ? JSON.parse(userCookie) : null
 
-  if (user) {
-    redirect(path.dashboard)
-  }
-
-  return <Home csrfToken={csrfToken} />
+  return (
+    <ApplicationLayout user={user} csrfToken={csrfToken}>
+      <Home user={user} csrfToken={csrfToken} />
+    </ApplicationLayout>
+  )
 }
 
 export default HomePage

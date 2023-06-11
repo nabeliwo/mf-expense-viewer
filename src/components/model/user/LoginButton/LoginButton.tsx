@@ -4,7 +4,6 @@ import { Button } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
 import { FC, useCallback } from 'react'
 
-import { path } from '@/constants'
 import { login } from '@/modules/user'
 
 type Props = {
@@ -16,12 +15,8 @@ export const LoginButton: FC<Props> = ({ csrfToken }) => {
 
   const handleClick = useCallback(async () => {
     await login(csrfToken)
-    router.push(path.dashboard)
+    router.refresh()
   }, [csrfToken, router])
 
-  return (
-    <Button colorScheme="blue" size="lg" onClick={() => handleClick()}>
-      ログインして使う
-    </Button>
-  )
+  return <Button onClick={() => handleClick()}>ログイン</Button>
 }
