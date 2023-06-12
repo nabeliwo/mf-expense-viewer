@@ -17,3 +17,12 @@ export type ExpenseRowObject = {
   振替: string
   ID: string
 }
+
+export type Classification = 0 | 1 | 2 | 3 | 4
+
+export type ExpenseResult = {
+  baseByMonth: number
+  luxuryByMonth: number
+  baseIrregular: number
+  luxuryIrregular: number
+}

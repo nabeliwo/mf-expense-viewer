@@ -1,7 +1,14 @@
-export type { Filters, ExpenseRowObject } from './expenseType'
+export type {
+  Filters,
+  ExpenseRowObject,
+  Classification,
+  ExpenseResult,
+} from './expenseType'
 export {
   expenseRow,
   conditionRow,
+  classification,
   defaultFilters,
   filterRow,
+  calculateExpense,
 } from './expenseLogic'

@@ -1,16 +1,33 @@
-import { useCallback, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 
-import { Filters, defaultFilters } from '@/modules/expense'
+import {
+  Classification,
+  ExpenseResult,
+  ExpenseRowObject,
+  Filters,
+  calculateExpense,
+  defaultFilters,
+} from '@/modules/expense'
 
 import { CsvUploader } from './CsvUploader'
 
-export const CsvUploaderAdapter = () => {
+type Props = {
+  onRegister: (expenseResult: ExpenseResult) => void
+}
+
+export const CsvUploaderAdapter: FC<Props> = ({ onRegister }) => {
   const [filters, setFilters] = useState<Filters>(defaultFilters)
 
-  const handleRegister = useCallback(() => {
-    console.log('--------------------------')
-    console.log('登録')
-  }, [])
+  const handleRegister = useCallback(
+    (
+      checkList: Array<Classification | undefined>,
+      rows: ExpenseRowObject[],
+    ) => {
+      const result = calculateExpense(checkList, rows)
+      onRegister(result)
+    },
+    [onRegister],
+  )
 
   return (
     <CsvUploader

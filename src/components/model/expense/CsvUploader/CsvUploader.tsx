@@ -6,22 +6,23 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
-  ModalBody,
   ModalCloseButton,
   useDisclosure,
 } from '@chakra-ui/react'
 import { FC, useCallback, useState } from 'react'
 
-import { Filters } from '@/modules/expense'
+import { Classification, ExpenseRowObject, Filters } from '@/modules/expense'
 
-import { Page1 } from './Page1'
-import { Page2 } from './Page2'
+import { ModalCheckPage } from './ModalCheckPage'
+import { ModalUploadPage } from './ModalUploadPage'
 
 type Props = {
   filters: Filters
   onChangeFilters: (filters: Filters) => void
-  onRegister: () => void
+  onRegister: (
+    checkList: Array<Classification | undefined>,
+    rows: ExpenseRowObject[],
+  ) => void
   onCloseModal: () => void
 }
 
@@ -42,6 +43,17 @@ export const CsvUploader: FC<Props> = ({
     onCloseModal()
   }, [onClose, onCloseModal])
 
+  const handleClickRegister = useCallback(
+    (
+      checkList: Array<Classification | undefined>,
+      rows: ExpenseRowObject[],
+    ) => {
+      onRegister(checkList, rows)
+      handleClose()
+    },
+    [onRegister, handleClose],
+  )
+
   return (
     <>
       <Button colorScheme="blue" size="lg" onClick={onOpen}>
@@ -58,62 +70,26 @@ export const CsvUploader: FC<Props> = ({
         <ModalContent>
           <ModalHeader>CSV からデータを登録する ({page}/2)</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            {page === 1 && (
-              <Page1
-                fileName={file?.name ?? ''}
-                filters={filters}
-                onSetFile={(file: File) => setFile(file)}
-                onChangeFilters={onChangeFilters}
-              />
-            )}
 
-            {page === 2 && file !== null && (
-              <Page2 filters={filters} file={file} />
-            )}
-          </ModalBody>
+          {page === 1 && (
+            <ModalUploadPage
+              file={file}
+              filters={filters}
+              onSetFile={(file: File) => setFile(file)}
+              onChangeFilters={onChangeFilters}
+              onClickCancel={() => handleClose()}
+              onClickNext={() => setPage(2)}
+            />
+          )}
 
-          <ModalFooter>
-            {page === 1 && (
-              <>
-                <Button mr={3} onClick={handleClose}>
-                  キャンセル
-                </Button>
-
-                <Button
-                  colorScheme="blue"
-                  isDisabled={file === null}
-                  onClick={() => {
-                    setPage(2)
-                  }}
-                >
-                  次へ
-                </Button>
-              </>
-            )}
-
-            {page === 2 && (
-              <>
-                <Button
-                  mr={3}
-                  onClick={() => {
-                    setPage(1)
-                  }}
-                >
-                  前へ
-                </Button>
-
-                <Button
-                  colorScheme="blue"
-                  onClick={() => {
-                    onRegister()
-                  }}
-                >
-                  登録
-                </Button>
-              </>
-            )}
-          </ModalFooter>
+          {page === 2 && file !== null && (
+            <ModalCheckPage
+              filters={filters}
+              file={file}
+              onClickPrev={() => setPage(1)}
+              onClickRegister={handleClickRegister}
+            />
+          )}
         </ModalContent>
       </Modal>
     </>
