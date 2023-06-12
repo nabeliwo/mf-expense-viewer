@@ -11,68 +11,36 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from '@chakra-ui/react'
-import { useCallback, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
+
+import { Filters } from '@/modules/expense'
 
 import { Page1 } from './Page1'
 import { Page2 } from './Page2'
 
-export const CsvUploader = () => {
+type Props = {
+  filters: Filters
+  onChangeFilters: (filters: Filters) => void
+  onRegister: () => void
+  onCloseModal: () => void
+}
+
+export const CsvUploader: FC<Props> = ({
+  filters,
+  onChangeFilters,
+  onRegister,
+  onCloseModal,
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [file, setFile] = useState<File | null>(null)
   const [page, setPage] = useState<1 | 2>(1)
-  const [filters, setFilters] = useState<[number, number, string][][]>([
-    [
-      [0, 0, '0'],
-      [4, 1, 'フラット35'],
-    ],
-    [[3, 2, '0']],
-  ])
-  const handleChangeFilter = useCallback(
-    (i: number, j: number, k: number, value: string) => {
-      const newArray = filters.concat()
+  const [file, setFile] = useState<File | null>(null)
 
-      newArray[i][j][k] = value
-
-      setFilters(newArray)
-    },
-    [filters],
-  )
-  const handleAddAndFilter = useCallback(
-    (i: number) => {
-      const newArray = filters.concat()
-
-      newArray[i].push([0, 0, ''])
-
-      setFilters(newArray)
-    },
-    [filters],
-  )
-  const handleAddOrFilter = useCallback(() => {
-    const newArray = filters.concat()
-
-    newArray.push([[0, 0, '']])
-
-    setFilters(newArray)
-  }, [filters])
-  const handleDeleteFilter = useCallback(
-    (i: number, j: number) => {
-      let newArray = filters.concat()
-
-      newArray[i] = newArray[i].filter((_, index) => index !== j)
-
-      if (newArray[i].length === 0) {
-        newArray = newArray.filter((_, index) => index !== i)
-      }
-
-      setFilters(newArray)
-    },
-    [filters],
-  )
   const handleClose = useCallback(() => {
     onClose()
     setFile(null)
     setPage(1)
-  }, [onClose])
+    onCloseModal()
+  }, [onClose, onCloseModal])
 
   return (
     <>
@@ -93,13 +61,10 @@ export const CsvUploader = () => {
           <ModalBody>
             {page === 1 && (
               <Page1
-                filters={filters}
                 fileName={file?.name ?? ''}
+                filters={filters}
                 onSetFile={(file: File) => setFile(file)}
-                onChangeFilter={handleChangeFilter}
-                onClickAddAnd={handleAddAndFilter}
-                onClickAddOr={handleAddOrFilter}
-                onClickDelete={handleDeleteFilter}
+                onChangeFilters={onChangeFilters}
               />
             )}
 
@@ -141,8 +106,7 @@ export const CsvUploader = () => {
                 <Button
                   colorScheme="blue"
                   onClick={() => {
-                    console.log('----------------------')
-                    console.log('登録')
+                    onRegister()
                   }}
                 >
                   登録

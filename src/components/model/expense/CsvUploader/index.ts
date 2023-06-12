@@ -1,1 +1,1 @@
-export { CsvUploader } from './CsvUploader'
+export { CsvUploaderAdapter } from './CsvUploader.adapter'

@@ -14,7 +14,7 @@ import NextLink from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { FC } from 'react'
 
-import { CsvUploader } from '@/components/model/expense/CsvUploader'
+import { CsvUploaderAdapter } from '@/components/model/expense/CsvUploader'
 import { path } from '@/constants'
 import { User } from '@/modules/user'
 
@@ -59,7 +59,7 @@ export const Home: FC<Props> = ({ user, csrfToken }) => {
 
       <Center>
         <Stack align="center" spacing="8">
-          <CsvUploader />
+          <CsvUploaderAdapter />
 
           <Link
             as={NextLink}

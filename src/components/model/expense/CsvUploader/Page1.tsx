@@ -17,29 +17,72 @@ import {
   Center,
   Text,
 } from '@chakra-ui/react'
-import { FC, Fragment, useRef } from 'react'
+import { FC, Fragment, useCallback, useEffect, useRef, useState } from 'react'
 import { FiFile } from 'react-icons/fi'
 
+import { Filters, conditionRow, expenseRow } from '@/modules/expense'
+
 type Props = {
-  filters: [number, number, string][][]
+  filters: Filters
   fileName: string
   onSetFile: (file: File) => void
-  onChangeFilter: (i: number, j: number, k: number, value: string) => void
-  onClickAddAnd: (i: number) => void
-  onClickAddOr: () => void
-  onClickDelete: (i: number, j: number) => void
+  onChangeFilters: (filters: Filters) => void
 }
 
 export const Page1: FC<Props> = ({
-  filters,
   fileName,
+  filters: defaultFilters,
   onSetFile,
-  onChangeFilter,
-  onClickAddAnd,
-  onClickAddOr,
-  onClickDelete,
+  onChangeFilters,
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const [filters, setFilters] = useState<Filters>(defaultFilters)
+
+  const handleChangeFilter = useCallback(
+    (i: number, j: number, k: number, value: string) => {
+      const newArray = filters.concat()
+
+      newArray[i][j][k] = value
+
+      setFilters(newArray)
+    },
+    [filters],
+  )
+  const handleAddAndFilter = useCallback(
+    (i: number) => {
+      const newArray = filters.concat()
+
+      newArray[i].push([0, 0, ''])
+
+      setFilters(newArray)
+    },
+    [filters],
+  )
+  const handleAddOrFilter = useCallback(() => {
+    const newArray = filters.concat()
+
+    newArray.push([[0, 0, '']])
+
+    setFilters(newArray)
+  }, [filters])
+  const handleDeleteFilter = useCallback(
+    (i: number, j: number) => {
+      let newArray = filters.concat()
+
+      newArray[i] = newArray[i].filter((_, index) => index !== j)
+
+      if (newArray[i].length === 0) {
+        newArray = newArray.filter((_, index) => index !== i)
+      }
+
+      setFilters(newArray)
+    },
+    [filters],
+  )
+
+  useEffect(() => {
+    onChangeFilters(filters)
+  }, [filters, onChangeFilters])
 
   return (
     <Stack spacing={6}>
@@ -77,7 +120,7 @@ export const Page1: FC<Props> = ({
       </FormControl>
 
       <FormControl>
-        <FormLabel fontWeight="bold">フィルター条件</FormLabel>
+        <FormLabel fontWeight="bold">除外条件</FormLabel>
 
         <Stack>
           {filters.map((filter, i) => (
@@ -92,19 +135,14 @@ export const Page1: FC<Props> = ({
                           bg="white"
                           value={item[0]}
                           onChange={(e) => {
-                            onChangeFilter(i, j, 0, e.target.value)
+                            handleChangeFilter(i, j, 0, e.target.value)
                           }}
                         >
-                          <option value="0">計算対象</option>
-                          <option value="1">日付</option>
-                          <option value="2">内容</option>
-                          <option value="3">金額(円)</option>
-                          <option value="4">保有金融機関</option>
-                          <option value="5">大項目</option>
-                          <option value="6">中項目</option>
-                          <option value="7">メモ</option>
-                          <option value="8">振替</option>
-                          <option value="9">ID</option>
+                          {expenseRow.map((name, value) => (
+                            <option key={value} value={value}>
+                              {name}
+                            </option>
+                          ))}
                         </Select>
 
                         <Select
@@ -112,15 +150,14 @@ export const Page1: FC<Props> = ({
                           bg="white"
                           value={item[1]}
                           onChange={(e) => {
-                            onChangeFilter(i, j, 1, e.target.value)
+                            handleChangeFilter(i, j, 1, e.target.value)
                           }}
                         >
-                          <option value="0">＝</option>
-                          <option value="1">≠</option>
-                          <option value="2">＞</option>
-                          <option value="3">＜</option>
-                          <option value="4">が次を含む</option>
-                          <option value="5">が次を含まない</option>
+                          {conditionRow.map((name, value) => (
+                            <option key={value} value={value}>
+                              {name}
+                            </option>
+                          ))}
                         </Select>
 
                         <Input
@@ -130,14 +167,14 @@ export const Page1: FC<Props> = ({
                           bg="white"
                           placeholder="入力してください"
                           onChange={(e) => {
-                            onChangeFilter(i, j, 2, e.target.value)
+                            handleChangeFilter(i, j, 2, e.target.value)
                           }}
                         />
 
                         <Button
                           variant="outline"
                           bg="white"
-                          onClick={() => onClickDelete(i, j)}
+                          onClick={() => handleDeleteFilter(i, j)}
                         >
                           <DeleteIcon />
                         </Button>
@@ -164,11 +201,11 @@ export const Page1: FC<Props> = ({
           <Button
             variant="outline"
             isDisabled={filters.length === 0}
-            onClick={() => onClickAddAnd(filters.length - 1)}
+            onClick={() => handleAddAndFilter(filters.length - 1)}
           >
             AND を追加
           </Button>
-          <Button variant="outline" onClick={() => onClickAddOr()}>
+          <Button variant="outline" onClick={() => handleAddOrFilter()}>
             OR を追加
           </Button>
         </Stack>
