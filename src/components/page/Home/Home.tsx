@@ -19,42 +19,55 @@ import {
 } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import NextLink from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { FC, useCallback, useEffect, useState } from 'react'
 
 import { CsvUploaderAdapter } from '@/components/model/expense/CsvUploader'
 import { path } from '@/constants'
-import { ExpenseResult } from '@/modules/expense'
+import { ExpenseResult, createExpense } from '@/modules/expense'
 import { User, login } from '@/modules/user'
 
 type Props = {
   user: User | null
   csrfToken: string
+  defaultExpense: ExpenseResult | null
 }
 
-export const Home: FC<Props> = ({ user, csrfToken }) => {
-  const [expenseResult, setExpenseResult] = useState<ExpenseResult | null>(null)
+export const Home: FC<Props> = ({ user, csrfToken, defaultExpense }) => {
+  const [expenseResult, setExpenseResult] = useState<ExpenseResult | null>(
+    defaultExpense,
+  )
   const month = useSearchParams().get('month')
+  const router = useRouter()
   const today = dayjs(month ?? undefined)
-  const currentMonth = today.format('YYYY/MM')
+  const currentMonthKey = today.format('YYYY-MM')
+
+  const handleRegister = useCallback(
+    (result: ExpenseResult) => {
+      setExpenseResult(result)
+
+      if (user) {
+        createExpense(user.id, currentMonthKey, result)
+      }
+    },
+    [user, currentMonthKey],
+  )
 
   const handleClickLoginAndStore = useCallback(async () => {
-    const user = await login(csrfToken)
-    console.log('------------ ここで DB 登録する -----------------')
-    console.log(user)
-  }, [csrfToken])
-
-  useEffect(() => {
-    if (expenseResult && user) {
-      console.log('------------ ここで DB 登録する -----------------')
-      console.log(expenseResult)
-      // router.refresh()
+    if (!expenseResult) {
+      return
     }
-  }, [expenseResult, user])
+
+    const user = await login(csrfToken)
+
+    createExpense(user.id, currentMonthKey, expenseResult).then(() => {
+      router.refresh()
+    })
+  }, [expenseResult, csrfToken, currentMonthKey, router])
 
   useEffect(() => {
-    setExpenseResult(null)
-  }, [currentMonth])
+    setExpenseResult(defaultExpense)
+  }, [defaultExpense])
 
   return (
     <>
@@ -69,7 +82,7 @@ export const Home: FC<Props> = ({ user, csrfToken }) => {
           前月
         </Button>
 
-        <Heading>{currentMonth}</Heading>
+        <Heading>{today.format('YYYY/MM')}</Heading>
 
         <Button
           as={NextLink}
@@ -124,9 +137,7 @@ export const Home: FC<Props> = ({ user, csrfToken }) => {
 
       <Center>
         <Stack align="center" spacing="8">
-          <CsvUploaderAdapter
-            onRegister={(result) => setExpenseResult(result)}
-          />
+          <CsvUploaderAdapter onRegister={handleRegister} />
 
           <Link
             as={NextLink}
@@ -137,9 +148,6 @@ export const Home: FC<Props> = ({ user, csrfToken }) => {
           </Link>
         </Stack>
       </Center>
-
-      <p>user: {user ? user.name : 'no user'}</p>
-      <p>csrfToken: {csrfToken}</p>
     </>
   )
 }

@@ -12,3 +12,4 @@ export {
   filterRow,
   calculateExpense,
 } from './expenseLogic'
+export { fetchExpense, createExpense } from './expenseRepository'
