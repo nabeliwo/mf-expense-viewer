@@ -18,7 +18,7 @@ export const POST = async (req: NextRequest) => {
   return NextResponse.json(user)
 }
 
-export const DELETE = async (req: NextRequest) => {
+export const DELETE = async () => {
   cookies().delete('user')
   return NextResponse.json({ status: 'ok' })
 }
