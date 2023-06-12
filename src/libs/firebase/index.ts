@@ -13,13 +13,13 @@ const firebaseConfig = {
 }
 
 export const app = initializeApp(firebaseConfig)
-
 export const database = getDatabase(app)
 
 export const auth = getAuth(app)
-export const authProvider = new GoogleAuthProvider()
 export const signIn = () =>
   new Promise<{ id: string; name: string }>((resolve, reject) => {
+    const authProvider = new GoogleAuthProvider()
+
     signInWithPopup(auth, authProvider)
       .then(async (result) => {
         resolve({
